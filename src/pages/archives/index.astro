@@ -3,6 +3,7 @@ import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, groupCollectionsByYear, sortMDByDate } from 'astro-pure/server'
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import EmptyState from '@/components/EmptyState.astro'
 
 export const prerender = true
 
@@ -24,7 +25,7 @@ const meta = {
       <h1 class='mb-6 text-3xl font-medium'>Archives</h1>
     </div>
 
-    {allPosts.length === 0 && <p>No posts yet.</p>}
+    {allPosts.length === 0 && <EmptyState />}
 
     <section id='content' class='animate' aria-label='Blog post list'>
       {

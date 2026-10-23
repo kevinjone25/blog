@@ -28,6 +28,7 @@ const {
   </head>
 
   <body class='flex justify-center bg-background text-foreground' {...props}>
+    <a class='skip-to-content' href='#main-content'>Skip to content</a>
     {
       highlightColor && (
         <div
@@ -42,7 +43,7 @@ const {
       class='w-full max-w-[70rem] min-h-[100dvh] flex flex-col justify-between'
     >
       <Header />
-      <div class='flex-1 w-full'>
+      <div id='main-content' class='flex-1 w-full' tabindex='-1'>
         <slot />
       </div>
       <Footer />

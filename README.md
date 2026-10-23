@@ -1,153 +1,74 @@
-# Astro Theme Pure
+# zzy / Blog
 
-English | [简体中文](./README-zh-CN.md)
+以 [Pure](https://github.com/cworld1/astro-theme-pure) 建立的 Astro 純靜態部落格，目標網域為 **https://blog.zzy.tw/**。目前不放示範文章，內容之後再加。
 
-A simple, fast and powerful blog & document theme built by Astro.
+2026-10-23 已發布至 **https://blog.zzy.tw/**；預覽環境為 https://zzy-blog-preview.zzy-portal.workers.dev/ 。正式站 DNS、HTTPS、必要頁面、主要 CSS／JavaScript／自託管字型及 Pagefind 靜態資產均已驗證。RSS 為合法的空 feed，示範文章與測試文章均未發布。
 
-[![GitHub deployments](https://img.shields.io/github/deployments/cworld1/astro-theme-pure/production?style=flat&logo=vercel&label=vercel)](https://astro-pure.js.org/)
-[![NPM Version](https://img.shields.io/npm/v/astro-pure?logo=npm&style=flat)](https://www.npmjs.com/package/astro-pure)
-[![GitHub Release](https://img.shields.io/github/v/release/cworld1/astro-theme-pure?include_prereleases&style=flat&label=template)](https://github.com/cworld1/astro-theme-pure/releases)
-[![GitHub License](https://img.shields.io/github/license/cworld1/astro-theme-pure?style=flat)](https://github.com/cworld1/astro-theme-pure/blob/main/LICENSE)
+評論、評論計數、瀏覽計數與 Waline 服務均已移除；文章、RSS、sitemap 與 Pagefind 搜尋索引在建置時產生。搜尋會在瀏覽器讀取本站的靜態索引，不需要資料庫或執行時 API。前端必要的選單、主題、搜尋和圖片互動仍可使用 JavaScript。
 
-![image](./.github/assets/header.webp)
-![image](./.github/assets/body.webp)
+## 本機開發
 
-> [!NOTE]
-> Known issues: Header & customize options is still under development (template exposed still).
+建議 Node.js 24；至少需要符合此專案 Astro 版本要求的 Node.js 22.19.0。
 
-## Introduction
-
-Checkout [Demo Site →](https://astro-pure.js.org/)
-
-### :fire: Features
-
-- [x] :rocket: Fast & high performance
-- [x] :star: Simple & clean design
-- [x] :iphone: Responsive design
-- [x] :mag: Full-site search built with [pagefind](https://pagefind.app/)
-- [x] :world_map: Sitemap & RSS feed
-- [x] :spider_web: SEO-friendly
-- [x] :book: TOC (table of contents)
-- [x] :framed_picture: Dynamic open graph generation for posts
-- [x] :framed_picture: Mediumzoom lightbox for images
-
-### :package: Components
-
-Theme includes a lot of components, which can not only be used in the theme, but also in other astro projects.
-
-> For other astro projects, UnoCSS is required. See [Package README](https://github.com/cworld1/astro-theme-pure/blob/main/packages/pure/README.md#use-with-common-astro-project) for more details.
-
-- Basic components: `Aside`, `Tabs`, `Timeline`, `Steps`, `Spoiler`...
-- Advanced components: `GithubCard`, `LinkPreview`, `Quote`, `QRCode`...
-
-### :white_check_mark: Lighthouse score
-
-[![lighthouse-score](./.github/assets/lighthouse-score.png)](https://pagespeed.web.dev/analysis/https-cworld-top/o229zrt5o4?form_factor=mobile&hl=en)
-
-## Documentation
-
-[Docs](https://astro-pure.js.org/docs) | [Showcase](https://github.com/cworld1/astro-theme-pure/issues/10)
-
-## Package
-
-See [astro-theme-pure](https://www.npmjs.com/package/astro-pure) on npm.
-
-## Local development
-
-### Environment requirements
-
-> [!WARNING]
-> Astro 6.0+ requires Node.js 22.12.0 or newer. Odd-numbered Node.js versions such as 23 are not supported by Astro.
-
-You can choose one of the following methods for project development:
-
-- [Bun](https://bun.com/get)
-- [Node.js](https://nodejs.org/)
-
-For deployment methods using container like [Docker](https://docs.docker.com/get-started/get-docker) & [Docker Compose](https://docs.docker.com/compose/install), please refer the documention [Using Docker Compose](https://astro-pure.js.org/docs/setup/using-docker-compose).
-
-### Getting started
-
-1. Clone the repository and enter the directory:
-
-   ```shell
-   git clone https://github.com/cworld1/astro-theme-pure.git
-   cd astro-theme-pure
-   ```
-
-   Edit `src/site.config.ts` to customize the site.
-
-2. Install dependencies:
-
-   ```shell
-   bun install
-   ```
-
-3. Start the development server:
-
-   ```shell
-   bun dev
-   # or
-   pnpm dev
-   # or
-   yarn run dev
-   # or
-   npm run dev
-   ```
-
-   The development server runs at <http://localhost:4321> by default.
-
-### Creating a new blog article
-
-After setting up either development environment, you can create a new blog article:
-
-```shell
-bun pure new
+```sh
+npm ci
+npm run dev
 ```
 
-## Deployment
+本地預設網址為 http://localhost:4321 。修改站名、描述、選單與 GitHub 連結可編輯 `src/site.config.ts`。主題的本地原始碼在 `packages/pure/`，來源與授權見 [UPSTREAM.md](./UPSTREAM.md)。
 
-### Manual deployment
+## 新增文章
 
-Build the production site into the `./dist` directory:
+在 `src/content/blog/` 新增 Markdown 或 MDX，例如 `hello-world.md`：
 
-```shell
-bun run build
+```md
+---
+title: 'Hello world'
+description: 'A short description of this post.'
+publishDate: 2026-10-23
+tags: ['notes']
+draft: false
+---
+
+Your article starts here.
 ```
 
-Once the build is complete, the generated static files will be located in the `./dist` directory. You can deploy this directory to any platform that supports static site hosting.
+`title`、`description`、`publishDate` 必填；`tags` 與 `draft` 可省略。標題最多 60 字元，描述最多 160 字元。可先設定 `draft: true` 保存未發布文章。檔名用作文章路徑，例如 `/blog/hello-world`；文章中不需要加評論設定。
 
-Preview the production build locally:
+圖片可以放在文章同層目錄並使用相對路徑。需要 MDX 元件時使用 `.mdx` 副檔名。尚無文章時，首頁、文章列表、標籤與封存頁顯示空白狀態，RSS 保持合法的空 feed。
 
-```shell
-bun preview
+## 建置與發布
+
+以下指令必須在這個目錄 `sites/blog/` 執行，與入口站的部署分開：
+
+```sh
+npm run build
+npm run preview
 ```
 
-### Static hosting platforms
+`build` 先重新產生 Astro 的內容快取，再執行 Astro 檢查、靜態建置與 `scripts/verify-static.mjs`；刪除最後一篇文章後也能正確回到空站。驗證涵蓋必要靜態頁、RSS／sitemap、正式網域的 canonical、搜尋索引、評論元件與伺服器產物殘留，以及未修改的上游示範文章。此驗證不取代瀏覽器或線上檢查。
 
-You can deploy your blog to any static site hosting platform.
+本次另以不發布的暫時文章確認中文、MDX 元件、KaTeX、程式碼高亮、文章目錄、標籤、RSS、靜態搜尋及草稿排除，驗證後已移除。空站在 Chrome 的 320、390、768、1440px 版面、手機選單、鍵盤操作、明暗模式與減少動態效果均通過，沒有第三方執行時請求或 JavaScript 錯誤。
 
-- Refer to the official [Astro Deployment Guide](https://docs.astro.build/en/guides/deploy/) for specific deployment methods.
-- Depending on the deployment platform you choose, you may need to modify the `astro.config.ts` configuration file in the project.
+先發布獨立預覽環境：
 
-|                                                                        Vercel                                                                         |                                                                              Netlify                                                                               |
-| :---------------------------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fcworld1%2Fastro-theme-pure) | [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/cworld1/astro-theme-pure) |
+```sh
+npm run deploy:preview
+```
 
-## Contributions
+確認後發布正式環境：
 
-To spend more time coding and less time fiddling with whitespace, this project uses code conventions and styles to encourage consistency. Code with a consistent style is easier (and less error-prone!) to review, maintain, and understand.
+```sh
+npm run deploy
+```
 
-## Thanks
+部署使用固定版本 Wrangler `4.151.3`。首次操作需要現有 Cloudflare 登入或 API token；不要把憑證寫入專案。
 
-- [Astro Cactus](https://github.com/chrismwilliams/astro-theme-cactus)
-- [Astro Resume](https://github.com/srleom/astro-theme-resume)
-- [Starlight](https://github.com/withastro/starlight)
+| 環境 | Worker | 網域範圍 |
+| --- | --- | --- |
+| Preview | `zzy-blog-preview` | `workers.dev`，不綁正式網域 |
+| Production | `zzy-blog` | `blog.zzy.tw` |
 
-Other third party references are on [Docs#Contributions](https://astro-pure.js.org/docs/advanced/about). Appreciate for all open source libraries.
+Wrangler 只上傳 `dist/`，沒有 Worker 程式入口、SSR adapter、KV 或資料庫綁定。不明路徑使用靜態 404 頁；`html_handling: 'drop-trailing-slash'` 與 Astro 的 canonical 格式一致。[Cloudflare HTML handling](https://developers.cloudflare.com/workers/static-assets/routing/advanced/html-handling/)
 
-## License
-
-This project is licensed under the Apache 2.0 License.
-
-[![Star History Chart](https://star-history.dera.page/svg?repos=cworld1/astro-theme-pure&type=Date)](https://star-history.dera.page/#cworld1/astro-theme-pure&Date)
+此配置不會部署或改動 `zzy.tw` 入口網站；本次已確認入口站內容與原版本一致。日後每次部署仍需另外驗證正式網址、憑證和內容，不能只以設定檔存在判斷發布成功。

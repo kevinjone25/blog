@@ -100,19 +100,6 @@ export const ThemeConfigSchema = () =>
      */
     prerender: z.boolean().default(true),
 
-    /** The npm CDN to use for loading npm packages.
-     * @example
-     * npmCDN: 'https://cdn.jsdelivr.net/npm'
-     * npmCDN: 'https://cdn.smartcis.cn/npm'
-     * npmCDN: 'https://unkpg.com'
-     * npmCDN: 'https://cdn.cbd.int'
-     * npmCDN: 'https://esm.sh'
-     */
-    npmCDN: z
-      .string()
-      .default('https://esm.sh')
-      .describe('The npm CDN to use for loading npm packages.'),
-
     /** Configure the header of your site. */
     header: z.object({
       /** The header menu items for your site.
