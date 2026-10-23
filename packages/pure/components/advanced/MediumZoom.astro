@@ -11,37 +11,44 @@ const { selector = config.integ.mediumZoom.selector, background = 'hsl(var(--bac
   Astro.props
 ---
 
-<script is:inline src={`${config.npmCDN}/medium-zoom/dist/pure/medium-zoom.min.umd.js`}></script>
-<script is:inline define:vars={{ selector, background }}>
-  mediumZoom(selector, { background })
+<image-zoom data-selector={selector} data-background={background} aria-hidden='true'></image-zoom>
+
+<script>
+  import mediumZoom, { type Zoom } from 'medium-zoom'
+
+  class ImageZoom extends HTMLElement {
+    zoom?: Zoom
+
+    initialize = () => {
+      this.zoom?.detach()
+      this.zoom = mediumZoom(this.dataset.selector || '.prose .zoomable', {
+        background: this.dataset.background || 'rgba(0, 0, 0, 0.8)'
+      })
+    }
+
+    connectedCallback() {
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', this.initialize, { once: true })
+      } else {
+        this.initialize()
+      }
+      document.addEventListener('astro:page-load', this.initialize)
+    }
+
+    disconnectedCallback() {
+      document.removeEventListener('DOMContentLoaded', this.initialize)
+      document.removeEventListener('astro:page-load', this.initialize)
+      this.zoom?.detach()
+    }
+  }
+
+  if (!customElements.get('image-zoom')) customElements.define('image-zoom', ImageZoom)
 </script>
+
 <style is:global>
-  .medium-zoom-overlay {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-    will-change: opacity;
-  }
-  .medium-zoom--opened .medium-zoom-overlay {
-    cursor: zoom-out;
-    opacity: 1;
-    z-index: 999;
-  }
-  .medium-zoom-image {
-    cursor: zoom-in;
-    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
-  }
-  .medium-zoom-image--hidden {
-    visibility: hidden;
-  }
-  .medium-zoom-image--opened {
-    position: relative;
-    cursor: zoom-out;
-    will-change: transform;
-    z-index: 999;
+  .medium-zoom-overlay { z-index: 999; }
+  .medium-zoom-image--opened { z-index: 1000; }
+  @media (prefers-reduced-motion: reduce) {
+    .medium-zoom-overlay, .medium-zoom-image { transition: none !important; }
   }
 </style>

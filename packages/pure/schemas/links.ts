@@ -19,12 +19,7 @@ export const FriendLinksSchema = () =>
     })
     .default({
       logbook: [],
-      applyTip: [
-        { name: 'Name', val: 'Astro Pure' },
-        { name: 'Desc', val: 'Null' },
-        { name: 'Link', val: 'https://astro-pure.js.org/' },
-        { name: 'Avatar', val: 'https://astro-pure.js.org/favicon/favicon.ico' }
-      ],
+      applyTip: [],
       cacheAvatar: false
     })
     .describe('Friend links for your website.')

@@ -11,12 +11,13 @@ import { Icon } from '../user'
     class='z-30 text-xl font-medium group-[.not-top]:ms-2 sm:group-[.not-top]:ms-3'
     style='transition:margin-inline 0.3s'
     href='/'
-    aria-label='Brand'>{config.title}</a
+    aria-label={config.title}>{config.title}</a
   >
 
   <div class='flex items-center gap-x-2'>
     {/* Menu links */}
-    <div
+    <nav
+      aria-label='Main navigation'
       id='headerExpandContent'
       class='end-0 start-0 top-12 grid border border-transparent group-[.not-top]:rounded-xl group-[.expanded]:opacity-100 dark:group-[.expanded.not-top]:bg-muted max-sm:absolute max-sm:opacity-0 max-sm:group-[.not-top]:border-border max-sm:group-[.expanded.not-top]:bg-background max-sm:group-[.not-top]:px-4 max-sm:group-[.not-top]:py-2 sm:grid-rows-1'
     >
@@ -26,7 +27,6 @@ import { Icon } from '../user'
             <a
               href={item.link}
               class='w-full flex-none grow py-2 text-right font-medium transition-none hover:text-primary sm:w-fit sm:px-3'
-              aria-label='Nav menu item'
               data-astro-prefetch
             >
               {item.title}
@@ -40,12 +40,15 @@ import { Icon } from '../user'
           </a>
         </div>
       </div>
-    </div>
+    </nav>
 
     {/* buttons */}
     <div class='z-30 flex gap-x-4 group-[.not-top]:gap-x-2' style='transition:gap 0.3s'>
       <button
         id='toggleDarkMode'
+        type='button'
+        data-theme='system'
+        aria-label='Switch color theme'
         class='group/dark box-content size-5 rounded-md border p-1.5 transition-colors hover:bg-border sm:group-[.not-top]:rounded-xl'
       >
         <span class='sr-only'>Dark Theme</span>
@@ -55,6 +58,9 @@ import { Icon } from '../user'
       </button>
       <button
         id='toggleMenu'
+        type='button'
+        aria-controls='headerExpandContent'
+        aria-expanded='false'
         class='rounded-md border p-1.5 transition-colors hover:bg-border sm:hidden sm:group-[.not-top]:rounded-xl'
       >
         <span class='sr-only'>Menu</span>
@@ -64,48 +70,102 @@ import { Icon } from '../user'
   </div>
 </header-component>
 
-{/* Use inline to load icon quicker firstly */}
+{/* Use inline to load the saved theme icon without assuming storage access. */}
 <script is:inline>
-  const toggleDarkModeElement = document.getElementById('toggleDarkMode')
-  if (toggleDarkModeElement) {
-    toggleDarkModeElement.dataset.theme = localStorage.getItem('theme') || 'system'
-  }
+  (() => {
+    const button = document.getElementById('toggleDarkMode')
+    if (!button) return
+    let preference = 'system'
+    try {
+      const stored = localStorage.getItem('theme')
+      if (['system', 'dark', 'light'].includes(stored)) preference = stored
+    } catch {}
+    button.dataset.theme = preference
+  })()
 </script>
 <script>
-  import { setTheme, showToast } from '../../utils'
+  import { getTheme, setTheme, showToast } from '../../utils'
 
   class HeaderComponent extends HTMLElement {
+    private events?: AbortController
+    private mobile = window.matchMedia('(max-width: 639px)')
+    private previousScroll = 0
+
+    private get menuButton() { return this.querySelector<HTMLButtonElement>('#toggleMenu') }
+    private get navigation() { return this.querySelector<HTMLElement>('#headerExpandContent') }
+
+    private synchronizeNavigation = () => {
+      if (!this.mobile.matches) this.classList.remove('expanded')
+      const expanded = this.mobile.matches && this.classList.contains('expanded')
+      const hidden = this.mobile.matches && !expanded
+      this.menuButton?.setAttribute('aria-expanded', String(expanded))
+      if (this.navigation) {
+        const focusWasInside = hidden && this.navigation.contains(document.activeElement)
+        this.navigation.inert = hidden
+        this.navigation.setAttribute('aria-hidden', String(hidden))
+        if (focusWasInside) this.menuButton?.focus()
+      }
+    }
+
+    private closeMenu(restoreFocus = false) {
+      this.classList.remove('expanded')
+      this.synchronizeNavigation()
+      if (restoreFocus) this.menuButton?.focus()
+    }
+
+    private updateThemeLabel() {
+      const button = this.querySelector<HTMLButtonElement>('#toggleDarkMode')
+      if (!button) return
+      const preference = getTheme() || 'system'
+      const order = ['system', 'dark', 'light']
+      const next = order[(order.indexOf(preference) + 1) % order.length]
+      button.dataset.theme = preference
+      button.setAttribute('aria-label', `Color theme: ${preference}. Switch to ${next}.`)
+    }
+
     connectedCallback() {
-      // Header
-      let preScrollY = window.scrollY
-      this.classList.toggle('not-top', preScrollY > 20)
+      this.events?.abort()
+      this.events = new AbortController()
+      const { signal } = this.events
+      this.previousScroll = window.scrollY
+      this.classList.toggle('not-top', this.previousScroll > 20)
+      this.synchronizeNavigation()
+      this.updateThemeLabel()
+
       window.addEventListener('scroll', () => {
         this.classList.toggle('not-top', window.scrollY > 20)
-        this.dataset.show = (window.scrollY < 350 || window.scrollY < preScrollY).toString()
-        preScrollY = window.scrollY
-      })
+        this.dataset.show = (window.scrollY < 350 || window.scrollY < this.previousScroll).toString()
+        this.previousScroll = window.scrollY
+      }, { passive: true, signal })
+      this.mobile.addEventListener('change', this.synchronizeNavigation, { signal })
 
-      // Dark Mode
-      const darkModeBtn = this.querySelector('#toggleDarkMode') as HTMLElement
-      darkModeBtn.addEventListener('click', () => {
-        // Old way: dispatch event
-        // const toggleDarkModeEvent = new CustomEvent('theme-change', {
-        //   detail: { theme: localStorage.getItem('theme') === 'light' ? 'dark' : 'light' }
-        // })
-        // document.dispatchEvent(toggleDarkModeEvent)
-        const newTheme = setTheme(undefined, true)
-        darkModeBtn.dataset.theme = newTheme
-        showToast({ message: `Set theme to ${newTheme}` })
-      })
-
-      // Menu
-      this.querySelector('#toggleMenu')?.addEventListener('click', () => {
+      this.menuButton?.addEventListener('click', () => {
         this.classList.toggle('expanded')
+        this.synchronizeNavigation()
+      }, { signal })
+      this.navigation?.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => this.closeMenu(), { signal })
       })
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && this.classList.contains('expanded')) this.closeMenu(true)
+      }, { signal })
+      document.addEventListener('pointerdown', (event) => {
+        if (this.classList.contains('expanded') && !this.contains(event.target as Node)) this.closeMenu()
+      }, { signal })
+
+      this.querySelector('#toggleDarkMode')?.addEventListener('click', () => {
+        const preference = setTheme(undefined, true)
+        this.updateThemeLabel()
+        showToast({ message: `Set theme to ${preference}` })
+      }, { signal })
+    }
+
+    disconnectedCallback() {
+      this.events?.abort()
     }
   }
 
-  customElements.define('header-component', HeaderComponent)
+  if (!customElements.get('header-component')) customElements.define('header-component', HeaderComponent)
 </script>
 
 <style>
@@ -144,7 +204,7 @@ import { Icon } from '../user'
   }
 
   /* header menu */
-  @media (max-width: 640px) {
+  @media (max-width: 639px) {
     #headerExpandContent {
       grid-template-rows: 0fr;
       transition:

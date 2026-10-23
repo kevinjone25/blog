@@ -13,17 +13,6 @@ export const IntegrationConfigSchema = () =>
      */
     pagefind: z.boolean().optional(),
 
-    /**
-     * Add a random quote to the footer (default on homepage footer).
-     * The quote will be fetched from the specified server and the target will be replaced with the quote.
-     */
-    quote: z.object({
-      /** The server to fetch the quote from. */
-      server: z.string(),
-      /** target: string, but (data: unknown) => string */
-      target: z.string()
-    }),
-
     /** UnoCSS typography */
     typography: z.object({
       /** The class to apply to the typography. */
@@ -44,20 +33,6 @@ export const IntegrationConfigSchema = () =>
       selector: z.string().default('.prose .zoomable'),
       /** Options to pass to the medium zoom library. */
       options: z.record(z.string(), z.any()).default({ className: 'zoomable' })
-    }),
-
-    /** The Waline comment system */
-    waline: z.object({
-      /** Enable the Waline comment system. */
-      enable: z.boolean().default(false),
-      /** The server to use for the Waline comment system. */
-      server: z.string().optional(),
-      /** Show meta info for comments */
-      showMeta: z.boolean().default(true),
-      /** The emoji to use for the Waline comment system. */
-      emoji: z.array(z.string()).optional(),
-      /** Additional configurations for the Waline comment system. */
-      additionalConfigs: z.record(z.string(), z.any()).default({})
     })
   })
 

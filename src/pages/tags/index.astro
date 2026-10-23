@@ -3,6 +3,7 @@ import { getBlogCollection, getUniqueTagsWithCount } from 'astro-pure/server'
 import { Button } from 'astro-pure/user'
 import { cn } from 'astro-pure/utils'
 import PageLayout from '@/layouts/BaseLayout.astro'
+import EmptyState from '@/components/EmptyState.astro'
 
 const allPosts = await getBlogCollection()
 const allTags = getUniqueTagsWithCount(allPosts)
@@ -41,7 +42,7 @@ const meta = {
             ))}
           </ul>
         ) : (
-          <p>Any tag yet.</p>
+          <EmptyState title='No topics yet.' description='Topics will grow with the writing.' />
         )
       }
     </div>

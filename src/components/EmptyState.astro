@@ -1,0 +1,12 @@
+---
+interface Props { title?: string; description?: string }
+const { title = 'No posts yet.', description = 'The first page is still unwritten.' } = Astro.props
+---
+<div class='empty-state rounded-2xl border bg-background px-6 py-10 text-center sm:px-10 sm:py-14' data-empty-state>
+  <svg class='mx-auto mb-5 size-9 text-primary' viewBox='0 0 32 32' fill='none' stroke='currentColor' stroke-width='1.2' aria-hidden='true'>
+    <path d='M4 6.5c4-1 8-.5 12 2.5 4-3 8-3.5 12-2.5v20c-4-1-8-.5-12 2-4-2.5-8-3-12-2z'/>
+    <path d='M16 9v19M8 12h4M8 16h4M20 12h4M20 16h4'/>
+  </svg>
+  <h2 class='mb-2 text-xl font-medium'>{title}</h2>
+  <p class='text-sm leading-7 text-muted-foreground'>{description}</p>
+</div>

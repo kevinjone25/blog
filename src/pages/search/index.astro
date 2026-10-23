@@ -1,33 +1,17 @@
 ---
 import { PFSearch } from 'astro-pure/components/pages'
+import { getBlogCollection } from 'astro-pure/server'
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
-import { integ } from '@/site-config'
-
-const meta = {
-  description: 'Search relative posts of the whole blog',
-  title: 'Search'
-}
+import EmptyState from '@/components/EmptyState.astro'
+const posts = await getBlogCollection()
 ---
-
-<PageLayout {meta}>
-  <Button title='Back' href='/blog' variant='back' />
+<PageLayout meta={{ title: 'Search', description: 'Search the writing on zzy’s blog.' }}>
+  <Button title='Blog' href='/blog' variant='back' />
   <main class='mt-6 lg:mt-10'>
-    <div id='content-header' class='animate'>
-      <h1 class='mb-6 text-3xl font-medium'>Search</h1>
-    </div>
-
+    <div id='content-header' class='animate'><h1 class='mb-6 text-3xl font-medium'>Search</h1></div>
     <div id='content' class='animate'>
-      {
-        integ.pagefind ? (
-          <>
-            <p>Enter a search term or phrase to search the blog.</p>
-            <PFSearch />
-          </>
-        ) : (
-          <p>Pagefind is disabled.</p>
-        )
-      }
+      {posts.length ? <><p class='text-muted-foreground'>Find a word, an idea or a topic.</p><PFSearch /><noscript>Enable JavaScript to search the blog.</noscript></> : <EmptyState title='No posts to search yet.' description='New writing will find its way here.' />}
     </div>
   </main>
 </PageLayout>

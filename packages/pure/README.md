@@ -1,5 +1,7 @@
 # Astro Theme Pure (Integration Package)
 
+> This copy is modified for zzy's static blog. Comments, page counters, remote widgets and npm CDN loading have been removed. Local changes and supported behavior are documented in [UPSTREAM.md](../../UPSTREAM.md); the upstream documentation below is preserved as a reference.
+
 A simple, fast and powerful blog & document theme built by Astro.
 
 [![GitHub deployments](https://img.shields.io/github/deployments/cworld1/astro-theme-pure/production?style=flat&logo=vercel&label=vercel)](https://astro-pure.js.org/)

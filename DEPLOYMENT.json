@@ -1,0 +1,37 @@
+{
+  "verified_at": "2026-10-23T15:55:50.459544+00:00",
+  "production_url": "https://blog.zzy.tw/",
+  "preview_url": "https://zzy-blog-preview.zzy-portal.workers.dev/",
+  "production_worker": "zzy-blog",
+  "production_version_id": "84125dc8-8319-4bc2-ac22-16904dc1c668",
+  "preview_worker": "zzy-blog-preview",
+  "preview_version_id": "91e75ea7-ab8f-492e-ae4d-e535219cb8c4",
+  "upstream_commit": "4ecd4762e1e750daf7a51978092d7cea8e14c0d6",
+  "framework": {
+    "Astro": "6.4.8",
+    "Pure": "1.4.9",
+    "Node_build": "24.22.1"
+  },
+  "rendering": "static assets only, no server entrypoint or bindings",
+  "published_articles": 0,
+  "asset_count": 115,
+  "asset_tree_sha256": "1f7973f0037740fa6e0a5c431e0df028b650255d9e63b15f4112f4c5e0e8fc92",
+  "verification": {
+    "astro_check": "0 errors, 0 warnings, 1 upstream nonblocking CLI hint",
+    "static_artifacts": "7 HTML pages, no server/comment output, zero content sources",
+    "future_article_fixture": "Chinese, Markdown/MDX, KaTeX, code, TOC, tags, RSS, static search and draft exclusion passed; test sources removed before final build/deploy",
+    "browser_widths": [
+      320,
+      390,
+      768,
+      1440
+    ],
+    "browser_interactions": "mobile menu/inert/Escape focus, explicit theme preference, reduced motion passed",
+    "browser_network": "no third-party runtime requests, missing assets or JS exceptions",
+    "production": "Public DNS, TLS, HTML, CSS, JS, fonts, Pagefind, RSS/sitemap valid; SHA256 matches local build",
+    "rss_items": 0,
+    "unknown_path": 404,
+    "blog_trailing_slash": "307 to /blog",
+    "portal": "https://zzy.tw/ remains 200, SHA256 matches original portal dist"
+  }
+}
