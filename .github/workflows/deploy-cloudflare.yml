@@ -67,4 +67,6 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.151.3'
           packageManager: npm
-          command: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'production' && 'deploy --env ""' || 'deploy --env preview' }}
+          # `--env=` selects the top-level (production) config as a single token;
+          # a quoted empty argument (`--env ""`) is dropped by wrangler-action.
+          command: ${{ github.event_name == 'workflow_dispatch' && inputs.target == 'production' && 'deploy --env=' || 'deploy --env preview' }}
