@@ -14,6 +14,8 @@ export const tagDesc = (tag: string): string =>
   `Kevin（ccy / zzy）部落格中標記為「${tag}」的全部文章，依發布時間由新到舊排列，方便集中閱讀同一主題的筆記與心得。`
 export const SEARCH_DESC = '搜尋 Kevin（ccy / zzy）部落格的全部文章：輸入關鍵字、主題或標籤，就能在瀏覽器內即時找到相關段落，不需要登入或連線到第三方服務。'
 export const NOT_FOUND_DESC = '找不到這個頁面：網址可能已經變更或輸入有誤。可以回到 Kevin（ccy / zzy）的部落格首頁，或從文章列表與標籤重新找起。'
+export const postOgAlt = (title: string): string => `文章〈${title}〉的分享圖，作者 Kevin (ccy / zzy)`
+export const GENERIC_OG_ALT = 'zzy / Blog：Notes, stories and small discoveries.'
 export const PERSON = {
   '@type': 'Person',
   '@id': 'https://zzy.tw/#person',
