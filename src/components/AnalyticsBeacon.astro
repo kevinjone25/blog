@@ -3,16 +3,28 @@ import { CF_WEB_ANALYTICS_TOKEN } from '@/site-config'
 ---
 
 <script is:inline define:vars={{ token: CF_WEB_ANALYTICS_TOKEN }}>
-  // Load the Cloudflare Web Analytics beacon after window load so it stays off the critical path.
+  // Load the Cloudflare Web Analytics beacon after window load, on the visitor's first interaction or after 3 s,
+  // whichever comes first, so it stays off the critical path and out of the LCP window.
   ;(function () {
+    var done = false
+    var timer
+    var events = ['pointerdown', 'keydown', 'scroll', 'touchstart']
     function load() {
+      if (done) return
+      done = true
+      clearTimeout(timer)
+      events.forEach(function (name) { window.removeEventListener(name, load) })
       var s = document.createElement('script')
       s.src = 'https://static.cloudflareinsights.com/beacon.min.js'
       s.defer = true
       s.setAttribute('data-cf-beacon', JSON.stringify({ token: token }))
       document.body.appendChild(s)
     }
-    if (document.readyState === 'complete') load()
-    else window.addEventListener('load', load, { once: true })
+    function arm() {
+      timer = setTimeout(load, 3000)
+      events.forEach(function (name) { window.addEventListener(name, load, { passive: true, once: true }) })
+    }
+    if (document.readyState === 'complete') arm()
+    else window.addEventListener('load', arm, { once: true })
   })()
 </script>
