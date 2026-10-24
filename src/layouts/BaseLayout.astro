@@ -1,8 +1,8 @@
 ---
 import { Footer, Header, ThemeProvider } from 'astro-pure/components/basic'
-import type { SiteMeta } from 'astro-pure/types'
 import BaseHead from '@/components/BaseHead.astro'
 import config from '@/site-config'
+import type { PageMeta } from '@/types'
 
 // Import the global.css file here so that it is included on
 // all pages through the use of the <BaseLayout /> component.
@@ -10,20 +10,20 @@ import '@/assets/styles/global.css'
 import '@/assets/styles/app.css'
 
 interface Props {
-  meta: SiteMeta
+  meta: PageMeta
   highlightColor?: string
 }
 
 const {
-  meta: { articleDate, description = config.description, ogImage, title },
+  meta,
   highlightColor,
   ...props
 } = Astro.props
 ---
 
-<html lang={config.locale.lang}>
+<html lang={meta.lang ?? config.locale.lang}>
   <head>
-    <BaseHead {articleDate} {description} {ogImage} {title} />
+    <BaseHead {...meta} />
     <ThemeProvider />
   </head>
 

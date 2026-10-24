@@ -13,6 +13,7 @@
     "preview": "astro preview --host 127.0.0.1",
     "check": "astro check",
     "verify:static": "node scripts/verify-static.mjs",
+    "test:seo": "node --test 'tests/seo/*.test.mjs'",
     "deploy:preview": "npm run build && npx --yes wrangler@4.151.3 deploy --env preview --config ./wrangler.jsonc",
     "deploy": "npm run build && npx --yes wrangler@4.151.3 deploy --env '' --config ./wrangler.jsonc",
     "prebuild": "node scripts/prepare-build.mjs"

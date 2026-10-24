@@ -5,10 +5,10 @@ import { Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import EmptyState from '@/components/EmptyState.astro'
 import Section from '@/components/home/Section.astro'
-import config from '@/site-config'
+import config, { HOME_DESC, HOME_TITLE } from '@/site-config'
 const posts = sortMDByDate(await getBlogCollection()).slice(0, 8)
 ---
-<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
+<PageLayout meta={{ title: 'Home', documentTitle: HOME_TITLE, description: HOME_DESC }} highlightColor='#659EB9'>
   <main class='mx-auto flex w-full flex-col items-center pb-5'>
     <section class='animate mb-14 flex flex-col items-center gap-y-6 pt-4 sm:pt-8' id='content-header'>
       <img src={config.logo.src} alt={config.logo.alt} width='112' height='112' class='rounded-full border bg-background p-1' fetchpriority='high' />

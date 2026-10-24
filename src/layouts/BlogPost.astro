@@ -6,6 +6,7 @@ import { MediumZoom } from 'astro-pure/advanced'
 import { ArticleBottom, Copyright, Hero, TOC } from 'astro-pure/components/pages'
 import PageLayout from '@/layouts/ContentLayout.astro'
 import config from 'virtual:config'
+import { resolveLanguage } from '@/utils/lang.mjs'
 
 interface Props {
   post: CollectionEntry<'blog'>
@@ -16,11 +17,12 @@ interface Props {
 const { post: { id, data }, posts, headings, remarkPluginFrontmatter } = Astro.props
 const { description, heroImage, publishDate, title } = data
 const socialImage = heroImage ? (typeof heroImage.src === 'string' ? heroImage.src : heroImage.src.src) : config.socialCard
+const { lang, ogLocale } = resolveLanguage(data.language)
 const articleDate = publishDate.toISOString()
 const primaryColor = heroImage?.color ?? 'hsl(var(--primary) / var(--un-text-opacity, 1))'
 ---
 <!-- Modified from Pure: reading metadata and local components only. -->
-<PageLayout meta={{ articleDate, description, ogImage: socialImage, title }} highlightColor={primaryColor} back='/blog'>
+<PageLayout meta={{ articleDate, description, lang, ogImage: socialImage, ogLocale, title }} highlightColor={primaryColor} back='/blog'>
   {!!headings.length && <TOC {headings} slot='sidebar' />}
   <Hero {data} {remarkPluginFrontmatter} slot='header' />
   <slot />
