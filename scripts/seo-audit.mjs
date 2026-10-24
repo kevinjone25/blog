@@ -122,7 +122,7 @@ async function auditPage({ site, path, kind }, titles) {
   else if (!okPairs.some(([l, o]) => l === lang && o === locale)) failures.push(`lang/og:locale mismatch: ${lang} / ${locale}`)
   if (site.name === 'portal' && !is404 && locale === undefined) failures.push('og:locale missing')
 
-  // beacon: deferred inline loader, never a <script src> on the critical path
+  // beacon: inline loader that waits for window load, then first interaction or 3 s; never a <script src>
   const allScripts = scripts(html)
   if (allScripts.some((x) => (x.attrs.src ?? '').includes('static.cloudflareinsights.com') || 'data-cf-beacon' in x.attrs)) failures.push('beacon is a static <script> (must load after window load)')
   const loaders = allScripts.filter((x) => !x.attrs.src && x.body.includes(BEACON_SRC))
@@ -131,6 +131,7 @@ async function auditPage({ site, path, kind }, titles) {
     const body = loaders[0].body
     if (!body.includes(site.token)) failures.push(`beacon token missing ${site.token}`)
     if (!/['"]load['"]/.test(body) || !body.includes('readyState')) failures.push('beacon loader does not wait for window load')
+    if (!['pointerdown', 'keydown', 'scroll', 'touchstart'].every((e) => body.includes(e)) || !/setTimeout\(\s*\w+\s*,\s*3000\s*\)/.test(body)) failures.push('beacon loader lacks first-interaction events or the 3000 ms timer')
   }
 
   if (!is404) {

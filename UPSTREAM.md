@@ -21,6 +21,6 @@
 9. 正式建置前清理產生的內容狀態，避免移除最後一篇文章後仍讀取舊快取。
 10. BackToTop 改為捲動時才量測版面（避免 forced reflow）；文章「Copy link」按鈕與 /blog「View all posts by years」連結移除與可見文字不符的 aria-label；Markdown 待辦清單的 checkbox 以項目文字作為可及名稱；KaTeX 字型改用 font-display: swap。
 
-Cloudflare Web Analytics 例外：每頁在 </body> 前以一段 inline 載入器在 window load 事件之後才插入 https://static.cloudflareinsights.com/beacon.min.js（defer，token 為公開值），避免拖慢首屏。這是唯一允許的第三方執行期請求；scripts/verify-static.mjs 只放行這一個網址，其他外部 script 與外部樣式表都會讓建置失敗。
+Cloudflare Web Analytics 例外：每頁在 </body> 前以一段 inline 載入器插入 https://static.cloudflareinsights.com/beacon.min.js（defer，token 為公開值）。插入時機是 window load 之後，等「訪客第一次互動（pointerdown、keydown、scroll、touchstart）」與「3000 ms 計時器」先到者，只插入一次。載入時機延後是為了不拖慢首屏、也避開 Lighthouse 的 LCP 視窗；代價是停留不到約 3 秒、也沒有任何互動就離開的訪客不會被計入。這是唯一允許的第三方執行期請求。由於 script 是在執行期動態插入，scripts/verify-static.mjs 看不到它；真正把關的是 tests/seo/beacon.test.mjs（無靜態 beacon src、每頁一份載入器、token 正確、時機規則），verify-static.mjs 只負責擋住 HTML 裡其他外部 script 與外部樣式表。
 
 這份檔案記錄來源與改動範圍。部署成功與否應以實際 Wrangler 結果及線上驗證為準。

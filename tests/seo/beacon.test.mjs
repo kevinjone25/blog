@@ -6,7 +6,15 @@ import { isAllowedExternalScript } from '../../scripts/verify-static.mjs'
 
 const BEACON_URL = 'https://static.cloudflareinsights.com/beacon.min.js'
 
-test('every page defers the Web Analytics beacon until window load via one inline loader', async () => {
+export function assertBeaconTiming(body, label) {
+  assert.ok(body.includes("'load'") || body.includes('"load"'), `${label}: waits for window load`)
+  assert.ok(body.includes('readyState'), `${label}: checks readyState`)
+  for (const e of ['pointerdown', 'keydown', 'scroll', 'touchstart']) assert.ok(body.includes(e), `${label}: listens for ${e}`)
+  assert.match(body, /passive:\s*true/, `${label}: passive listeners`); assert.match(body, /once:\s*true/, `${label}: once listeners`)
+  assert.match(body, /setTimeout\(\s*\w+\s*,\s*3000\s*\)/, `${label}: 3000 ms timer`)
+  assert.match(body, /removeEventListener/, `${label}: removes listeners after inserting`); assert.match(body, /if \(done\) return/, `${label}: inserts at most once`)
+}
+test('every page loads the Web Analytics beacon via one inline loader after window load and first interaction or 3 s', async () => {
   const routes = await htmlRoutes()
   assert.ok(routes.length > 0, 'no HTML routes found in dist/')
   for (const r of routes) {
@@ -15,8 +23,7 @@ test('every page defers the Web Analytics beacon until window load via one inlin
     assert.equal(all.filter((s) => 'data-cf-beacon' in s.attrs).length, 0, `${r}: no static data-cf-beacon script`)
     const loaders = all.filter((s) => !s.attrs.src && s.body.includes(BEACON_URL) && s.body.includes(BLOG_RUM_TOKEN))
     assert.equal(loaders.length, 1, `${r}: exactly one inline loader`)
-    assert.ok(loaders[0].body.includes("'load'") || loaders[0].body.includes('"load"'), `${r}: waits for load`)
-    assert.ok(loaders[0].body.includes('readyState'), `${r}: checks readyState`)
+    assertBeaconTiming(loaders[0].body, r)
   }
 })
 test('404 page has exactly one <main> landmark', async () => {
