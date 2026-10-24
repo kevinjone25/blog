@@ -18,7 +18,7 @@ const slug = (u) => u.replace(/^https?:\/\//, '').replace(/[^A-Za-z0-9]+/g, '_')
 
 async function lighthouse(url, mode, attempt) {
   const file = join(out, `${slug(url)}.${mode}.${attempt}.json`)
-  const flags = ['--yes', 'lighthouse@13', url, '--quiet', '--chrome-flags=--headless=new', '--output=json', `--output-path=${file}`]
+  const flags = ['--yes', 'lighthouse@13', url, '--quiet', '--chrome-flags=--headless=new', '--output=json', '--ignore-status-code', `--output-path=${file}`]
   if (mode === 'desktop') flags.push('--preset=desktop')
   await run('npx', flags, { maxBuffer: 1 << 26 })
   const json = JSON.parse(await readFile(file, 'utf8'))

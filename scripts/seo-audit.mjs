@@ -117,7 +117,7 @@ async function auditPage({ site, path, kind }, titles) {
   const okPairs = site.name === 'portal' ? [['en', null]] : [['zh-Hant-TW', 'zh_TW'], ['en', 'en_US']]
   if (site.name === 'portal') { if (lang !== 'en') failures.push(`portal lang ${lang} expected en`) }
   else if (!okPairs.some(([l, o]) => l === lang && o === locale)) failures.push(`lang/og:locale mismatch: ${lang} / ${locale}`)
-  if (site.name === 'portal' && locale === undefined) failures.push('og:locale missing')
+  if (site.name === 'portal' && !is404 && locale === undefined) failures.push('og:locale missing')
 
   // beacon
   const beacons = [...html.matchAll(/<script\b[^>]*\bdata-cf-beacon\b[^>]*>/gi)].map((m) => attrs(m[0]))
@@ -167,7 +167,7 @@ async function auditPage({ site, path, kind }, titles) {
   }
 
   // portal: link to blog without JS
-  if (site.name === 'portal' && path === '/' && !html.includes('<a href="https://blog.zzy.tw/">')) failures.push('portal HTML lacks <a href="https://blog.zzy.tw/">')
+  if (site.name === 'portal' && path === '/' && ![...html.matchAll(/<a\b[^>]*>/gi)].some((m) => attrs(m[0]).href === 'https://blog.zzy.tw/')) failures.push('portal static HTML lacks <a href="https://blog.zzy.tw/">')
 
   record(url, failures)
 }
