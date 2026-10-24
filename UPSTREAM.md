@@ -19,5 +19,6 @@
 7. 字型在建置時取得並隨靜態產物自託管；圖片放大改為本機打包的 MediumZoom，移除 npm CDN 依賴。
 8. 修正手機折疊導覽的焦點與 ARIA、明暗模式與系統偏好的同步，以及 Pagefind 結果回傳／初始化；保留 Pure 本身的互動方式。
 9. 正式建置前清理產生的內容狀態，避免移除最後一篇文章後仍讀取舊快取。
+10. BackToTop 改為捲動時才量測版面（避免 forced reflow）；文章「Copy link」按鈕與 /blog「View all posts by years」連結移除與可見文字不符的 aria-label；Markdown 待辦清單的 checkbox 以項目文字作為可及名稱；KaTeX 字型改用 font-display: swap。
 
 這份檔案記錄來源與改動範圍。部署成功與否應以實際 Wrangler 結果及線上驗證為準。

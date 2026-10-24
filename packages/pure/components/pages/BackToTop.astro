@@ -38,6 +38,7 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
     clientHeight = 0
     ticking = false
     needPercent = true
+    measured = false
 
     calculateScrollPercent() {
       const scrollTop = Math.max(0, window.scrollY || document.documentElement.scrollTop)
@@ -55,6 +56,13 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
       this.scrollPercentEl.textContent = percent.toString()
       this.actionBtns.classList.toggle('ended', percent >= 100)
       this.ticking = false
+    }
+
+    measure() {
+      this.scrollHeight = this.articleEl.scrollHeight
+      this.articleTop = this.articleEl.offsetTop
+      this.clientHeight = document.documentElement.clientHeight
+      this.measured = true
     }
 
     connectedCallback() {
@@ -84,16 +92,26 @@ const { header: headerName, content: contentName, needPercent = true } = Astro.p
       }
       // Scroll percent update
       if (this.needPercent) {
-        this.scrollHeight = this.articleEl.scrollHeight
-        this.articleTop = this.articleEl.offsetTop
-        this.clientHeight = document.documentElement.clientHeight
-
-        document.addEventListener('scroll', () => {
-          if (!this.ticking) {
-            requestAnimationFrame(() => this.updateScrollPercent())
-            this.ticking = true
-          }
-        })
+        document.addEventListener(
+          'scroll',
+          () => {
+            if (!this.ticking) {
+              requestAnimationFrame(() => {
+                if (!this.measured) this.measure()
+                this.updateScrollPercent()
+              })
+              this.ticking = true
+            }
+          },
+          { passive: true }
+        )
+        window.addEventListener(
+          'resize',
+          () => {
+            this.measured = false
+          },
+          { passive: true }
+        )
       } else {
         this.actionBtns.classList.add('ended')
       }
