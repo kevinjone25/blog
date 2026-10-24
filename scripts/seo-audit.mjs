@@ -119,14 +119,15 @@ async function auditPage({ site, path, kind }, titles) {
   else if (!okPairs.some(([l, o]) => l === lang && o === locale)) failures.push(`lang/og:locale mismatch: ${lang} / ${locale}`)
   if (site.name === 'portal' && !is404 && locale === undefined) failures.push('og:locale missing')
 
-  // beacon
-  const beacons = [...html.matchAll(/<script\b[^>]*\bdata-cf-beacon\b[^>]*>/gi)].map((m) => attrs(m[0]))
-  if (beacons.length !== 1) failures.push(`beacon count ${beacons.length}`)
+  // beacon: deferred inline loader, never a <script src> on the critical path
+  const allScripts = scripts(html)
+  if (allScripts.some((x) => (x.attrs.src ?? '').includes('static.cloudflareinsights.com') || 'data-cf-beacon' in x.attrs)) failures.push('beacon is a static <script> (must load after window load)')
+  const loaders = allScripts.filter((x) => !x.attrs.src && x.body.includes(BEACON_SRC))
+  if (loaders.length !== 1) failures.push(`beacon loader count ${loaders.length}`)
   else {
-    let tok
-    try { tok = JSON.parse(decode(beacons[0]['data-cf-beacon'])).token } catch { tok = undefined }
-    if (tok !== site.token) failures.push(`beacon token ${tok}`)
-    if (beacons[0].src !== BEACON_SRC) failures.push(`beacon src ${beacons[0].src}`)
+    const body = loaders[0].body
+    if (!body.includes(site.token)) failures.push(`beacon token missing ${site.token}`)
+    if (!/['"]load['"]/.test(body) || !body.includes('readyState')) failures.push('beacon loader does not wait for window load')
   }
 
   if (!is404) {
