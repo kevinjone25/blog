@@ -8,6 +8,7 @@ import PageLayout from '@/layouts/ContentLayout.astro'
 import config from 'virtual:config'
 import { postOgAlt } from '@/site-config'
 import { resolveLanguage } from '@/utils/lang.mjs'
+import { blogPostingGraph } from '@/utils/structured-data'
 
 interface Props {
   post: CollectionEntry<'blog'>
@@ -20,10 +21,20 @@ const { description, heroImage, publishDate, title } = data
 const { lang, ogLocale } = resolveLanguage(data.language)
 const articleDate = publishDate.toISOString()
 const modifiedDate = (data.updatedDate ?? publishDate).toISOString()
+const jsonLd = blogPostingGraph({
+  url: new URL(`/blog/${id}`, Astro.site).href,
+  title,
+  description,
+  published: articleDate,
+  modified: modifiedDate,
+  image: new URL(`/og/${id}.png`, Astro.site).href,
+  lang,
+  tags: data.tags
+})
 const primaryColor = heroImage?.color ?? 'hsl(var(--primary) / var(--un-text-opacity, 1))'
 ---
 <!-- Modified from Pure: reading metadata and local components only. -->
-<PageLayout meta={{ articleDate, description, lang, modifiedDate, ogImage: `/og/${id}.png`, ogImageAlt: postOgAlt(title), ogLocale, tags: data.tags, title }} highlightColor={primaryColor} back='/blog'>
+<PageLayout meta={{ articleDate, description, jsonLd, lang, modifiedDate, ogImage: `/og/${id}.png`, ogImageAlt: postOgAlt(title), ogLocale, tags: data.tags, title }} highlightColor={primaryColor} back='/blog'>
   {!!headings.length && <TOC {headings} slot='sidebar' />}
   <Hero {data} {remarkPluginFrontmatter} slot='header' />
   <slot />

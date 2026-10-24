@@ -1,0 +1,8 @@
+---
+import { serializeJsonLd } from '@/utils/json-ld.mjs'
+import type { JsonLdGraph } from '@/utils/structured-data'
+
+interface Props { graph: JsonLdGraph }
+const { graph } = Astro.props
+---
+<script is:inline type='application/ld+json' set:html={serializeJsonLd(graph)} />
