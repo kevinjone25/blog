@@ -33,3 +33,4 @@ export const DESCRIPTIONS = {
 
 export const postOgAlt = (title) => `文章〈${title}〉的分享圖，作者 Kevin (ccy / zzy)`
 export const GENERIC_OG_ALT = 'zzy / Blog：Notes, stories and small discoveries.'
+export const BLOG_RUM_TOKEN = 'fa47122d6c3a4facb31f3ea852bc6298'

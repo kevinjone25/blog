@@ -14,6 +14,7 @@ const demoHashes = new Set([
   '4f37244a587dab47856b8e3b2e21a1f6b399fee4b0ae7c46ef579eb4c9e9300c',
   'c19cdcd72a47a780ad1d6c061540cd983df01450aaa69d0992f95c1de6305049'
 ])
+const BEACON_URL = 'https://static.cloudflareinsights.com/beacon.min.js'
 const runtimeService = /(?:@waline\/client|walineInit|waline\.js\.org|astro-theme-pure-waline\.arthals\.ink|giscus\.app\/client|disqus\.com\/embed|twikoo\.all(?:\.min)?\.js)/i
 const widgetToken = /^(?:waline(?:[-_].*)?|wl-(?:comment|content|editor|reaction).*|giscus(?:-frame)?|disqus_thread|twikoo(?:-container)?|comment-component)$/i
 const remoteApiCall = /\b(?:fetch|sendBeacon|WebSocket|EventSource)\s*\(\s*["'`](https?:\/\/[^\s"'`]+)/g
@@ -44,6 +45,13 @@ function canonicalOrigin(value) {
 }
 function xmlText(value) {
   return decode(value.replace(/^\s*<!\[CDATA\[([\s\S]*)\]\]>\s*$/, '$1').trim())
+}
+
+/** Same-origin scripts and the single approved Cloudflare Web Analytics beacon. */
+export function isAllowedExternalScript(src) {
+  let url
+  try { url = new URL(src, SITE) } catch { return false }
+  return url.origin === SITE || url.href === BEACON_URL
 }
 
 /** Inspect built artifacts and configuration; article prose is not treated as executable code. */
@@ -88,6 +96,7 @@ export async function verifyStaticSite(root = projectRoot) {
     let url
     try { url = new URL(decode(src), SITE) } catch { failures.push(`${label}: invalid script src`); return }
     requireCheck(!runtimeService.test(url.href), `${label}: comment service script reference remains`)
+    requireCheck(isAllowedExternalScript(url.href), `${label}: third-party script ${url.href} is not allowed`)
     if (url.origin !== SITE) return
     const asset = resolve(dist, `.${decodeURIComponent(url.pathname)}`)
     requireCheck(asset.startsWith(dist + sep), `${label}: script reference escapes dist/`)
@@ -129,6 +138,13 @@ export async function verifyStaticSite(root = projectRoot) {
       for (const name of ['src', 'data-server-url', 'action']) {
         if (attr[name]) requireCheck(!runtimeService.test(attr[name]), `${label}: comment service ${name} remains`)
       }
+    }
+    for (const match of html.matchAll(/<link\b[^>]*>/gi)) {
+      const attr = attributes(match[0])
+      if (!/\b(?:stylesheet|preload|modulepreload)\b/i.test(attr.rel ?? '') || !attr.href) continue
+      let href
+      try { href = new URL(decode(attr.href), SITE) } catch { continue }
+      if (href.origin !== SITE) failures.push(`${label}: external ${attr.rel} link ${href.href} is not allowed`)
     }
     for (const match of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/gi)) {
       const attr = attributes(match[1])

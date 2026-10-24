@@ -21,4 +21,6 @@
 9. 正式建置前清理產生的內容狀態，避免移除最後一篇文章後仍讀取舊快取。
 10. BackToTop 改為捲動時才量測版面（避免 forced reflow）；文章「Copy link」按鈕與 /blog「View all posts by years」連結移除與可見文字不符的 aria-label；Markdown 待辦清單的 checkbox 以項目文字作為可及名稱；KaTeX 字型改用 font-display: swap。
 
+Cloudflare Web Analytics 例外：每頁在 </body> 前以 defer 載入 https://static.cloudflareinsights.com/beacon.min.js（token 為公開值）。這是唯一允許的第三方執行期請求；scripts/verify-static.mjs 只放行這一個網址，其他外部 script 與外部樣式表都會讓建置失敗。
+
 這份檔案記錄來源與改動範圍。部署成功與否應以實際 Wrangler 結果及線上驗證為準。
