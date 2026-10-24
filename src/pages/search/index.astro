@@ -7,7 +7,7 @@ import EmptyState from '@/components/EmptyState.astro'
 import { SEARCH_DESC } from '@/site-config'
 const posts = await getBlogCollection()
 ---
-<PageLayout meta={{ title: 'Search', description: SEARCH_DESC }}>
+<PageLayout meta={{ title: 'Search', description: SEARCH_DESC, robots: 'noindex, follow' }}>
   <Button title='Blog' href='/blog' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'><h1 class='mb-6 text-3xl font-medium'>Search</h1></div>
