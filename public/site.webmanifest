@@ -1,0 +1,13 @@
+{
+  "name": "zzy / Blog",
+  "short_name": "zzy / Blog",
+  "lang": "zh-Hant-TW",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#FCFCFD",
+  "theme_color": "#FCFCFD",
+  "icons": [
+    { "src": "/images/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
