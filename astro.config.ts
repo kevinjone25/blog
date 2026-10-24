@@ -10,6 +10,8 @@ import remarkMath from 'remark-math'
 // Local integrations
 import { createLastmodResolver, readPostDates } from './src/utils/sitemap-lastmod.mjs'
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
+import rehypeTaskListLabels from './src/plugins/rehype-task-list-labels.ts'
+import katexFontDisplay from './src/plugins/vite-katex-font-display.ts'
 // Shiki
 import {
   addCollapse,
@@ -76,11 +78,14 @@ export default defineConfig({
     }
   ],
 
+  vite: { plugins: [katexFontDisplay()] },
+
   // [Markdown]
   markdown: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [
       [rehypeKatex, {}],
+      rehypeTaskListLabels,
       rehypeHeadingIds,
       [
         rehypeAutolinkHeadings,
