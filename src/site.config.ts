@@ -2,6 +2,7 @@ import type { Config, IntegrationUserConfig, ThemeUserConfig } from 'astro-pure/
 import { DEFAULT_LANGUAGE } from './utils/lang.mjs'
 
 export const BIO = '人生就像瑞士捲，有的人在瑞士，有的人在卷'
+export const CF_WEB_ANALYTICS_TOKEN = 'fa47122d6c3a4facb31f3ea852bc6298'
 export const SEO_NAME = 'Kevin (ccy / zzy)'
 export const HOME_TITLE = 'Kevin (ccy / zzy) 的部落格'
 export const HOME_DESC = '人生就像瑞士捲，有的人在瑞士，有的人在卷。Kevin（ccy / zzy）的部落格：筆記、想法，和值得留下的東西。'

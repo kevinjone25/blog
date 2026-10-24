@@ -1,5 +1,6 @@
 ---
 import { Footer, Header, ThemeProvider } from 'astro-pure/components/basic'
+import AnalyticsBeacon from '@/components/AnalyticsBeacon.astro'
 import BaseHead from '@/components/BaseHead.astro'
 import config from '@/site-config'
 import type { PageMeta } from '@/types'
@@ -88,5 +89,6 @@ const {
         }
       }
     </style>
+    <AnalyticsBeacon />
   </body>
 </html>
