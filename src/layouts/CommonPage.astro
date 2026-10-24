@@ -2,11 +2,12 @@
 import type { MarkdownHeading } from 'astro'
 import { TOC } from 'astro-pure/components/pages'
 import PageLayout from '@/layouts/ContentLayout.astro'
-interface Props { title: string; description: string; headings?: MarkdownHeading[] }
-const { title, description, headings, ...props } = Astro.props
+import type { JsonLdGraph } from '@/utils/structured-data'
+interface Props { title: string; description: string; headings?: MarkdownHeading[]; jsonLd?: JsonLdGraph }
+const { title, description, headings, jsonLd, ...props } = Astro.props
 ---
 <!-- Modified from Pure: no remote widgets or counters. -->
-<PageLayout meta={{ title, description }} {...props}>
+<PageLayout meta={{ title, description, jsonLd }} {...props}>
   {!!headings?.length && <TOC headings={headings} slot='sidebar' />}
   <Fragment slot='header'><h1 class='text-2xl font-medium sm:mb-2 sm:text-3xl'>{title}</h1></Fragment>
   <slot />

@@ -3,11 +3,12 @@ import { Font } from 'astro:assets'
 
 import config from 'virtual:config'
 import { GENERIC_OG_ALT, SEO_NAME } from '@/site-config'
+import JsonLd from '@/components/JsonLd.astro'
 import type { PageMeta } from '@/types'
 
 type Props = PageMeta
 
-const { articleDate, description, documentTitle, modifiedDate, ogImage, ogImageAlt, ogLocale, tags, title } = Astro.props
+const { articleDate, description, documentTitle, jsonLd, modifiedDate, ogImage, ogImageAlt, ogLocale, tags, title } = Astro.props
 
 const fullTitle = documentTitle ?? `${title} ${config.titleDelimiter} ${SEO_NAME}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
@@ -87,5 +88,7 @@ const socialImageURL = new URL(ogImage ?? config.socialCard, Astro.site).href
   title={config.title}
   href={`${Astro.site}rss.xml`}
 />
+
+{jsonLd && <JsonLd graph={jsonLd} />}
 
 <meta content={Astro.generator} name='generator' />

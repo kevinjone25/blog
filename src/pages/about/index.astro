@@ -1,6 +1,7 @@
 ---
 import PageLayout from '@/layouts/CommonPage.astro'
 import { ABOUT_DESC, ABOUT_INTRO, BIO } from '@/site-config'
+import { profilePageGraph } from '@/utils/structured-data'
 
 const headings = [
   { depth: 2, slug: 'about-this-blog', text: 'About this blog' },
@@ -9,7 +10,7 @@ const headings = [
 ]
 ---
 
-<PageLayout title='About' description={ABOUT_DESC} {headings}>
+<PageLayout title='About' description={ABOUT_DESC} {headings} jsonLd={profilePageGraph()}>
   <h2 id='about-this-blog'>About this blog</h2>
   <p>{ABOUT_INTRO}</p>
   <p>{BIO}。</p>
