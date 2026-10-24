@@ -29,6 +29,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.9",
+    "@expo-google-fonts/noto-sans-tc": "0.4.4",
+    "satori": "0.32.0",
     "typescript": "^6.0.3"
   }
 }

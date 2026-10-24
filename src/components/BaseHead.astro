@@ -2,16 +2,16 @@
 import { Font } from 'astro:assets'
 
 import config from 'virtual:config'
-import { SEO_NAME } from '@/site-config'
+import { GENERIC_OG_ALT, SEO_NAME } from '@/site-config'
 import type { PageMeta } from '@/types'
 
 type Props = PageMeta
 
-const { articleDate, description, documentTitle, ogImage, ogLocale, title } = Astro.props
+const { articleDate, description, documentTitle, modifiedDate, ogImage, ogImageAlt, ogLocale, tags, title } = Astro.props
 
 const fullTitle = documentTitle ?? `${title} ${config.titleDelimiter} ${SEO_NAME}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url).href
+const socialImageURL = new URL(ogImage ?? config.socialCard, Astro.site).href
 ---
 
 <meta charset='utf-8' />
@@ -57,11 +57,14 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 <meta content={socialImageURL} property='og:image' />
 <meta content='1200' property='og:image:width' />
 <meta content='630' property='og:image:height' />
+<meta content={ogImageAlt ?? GENERIC_OG_ALT} property='og:image:alt' />
 {
   articleDate && (
     <>
-      <meta content={config.author} property='article:author' />
+      <meta content={SEO_NAME} property='article:author' />
       <meta content={articleDate} property='article:published_time' />
+      <meta content={modifiedDate ?? articleDate} property='article:modified_time' />
+      {(tags ?? []).map((tag) => <meta content={tag} property='article:tag' />)}
     </>
   )
 }
@@ -72,6 +75,7 @@ const socialImageURL = new URL(ogImage ? ogImage : config.socialCard, Astro.url)
 <meta content={articleDate ? title : fullTitle} property='twitter:title' />
 <meta content={description} property='twitter:description' />
 <meta content={socialImageURL} property='twitter:image' />
+<meta content={ogImageAlt ?? GENERIC_OG_ALT} property='twitter:image:alt' />
 
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />

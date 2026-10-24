@@ -30,3 +30,6 @@ export const DESCRIPTIONS = {
   '/': HOME_DESC, '/about': ABOUT_DESC, '/blog': BLOG_DESC, '/archives': ARCHIVES_DESC, '/tags': TAGS_DESC,
   '/tags/寫作': tagDesc('寫作'), '/search': SEARCH_DESC, '/404': NOT_FOUND_DESC
 }
+
+export const postOgAlt = (title) => `文章〈${title}〉的分享圖，作者 Kevin (ccy / zzy)`
+export const GENERIC_OG_ALT = 'zzy / Blog：Notes, stories and small discoveries.'

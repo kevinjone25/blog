@@ -5,4 +5,7 @@ export interface PageMeta extends SiteMeta {
   documentTitle?: string
   lang?: string
   ogLocale?: string
+  ogImageAlt?: string
+  modifiedDate?: string
+  tags?: string[]
 }
