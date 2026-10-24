@@ -12,18 +12,24 @@ async function walk(dir) {
   return out.sort()
 }
 
-export async function readPostDates(contentDir) {
+export async function readPosts(contentDir) {
   const posts = []
   for (const file of await walk(contentDir)) {
     const { frontmatter } = parseFrontmatter(await readFile(file, 'utf8'))
     if (frontmatter.draft === true) continue
     const rel = relative(contentDir, file).split(sep).join('/').replace(/\.mdx?$/, '').replace(/\/index$/, '')
     const id = typeof frontmatter.slug === 'string' ? frontmatter.slug : rel.toLowerCase()
-    const modified = new Date(frontmatter.updatedDate ?? frontmatter.publishDate)
-    const tags = [...new Set((frontmatter.tags ?? []).map((t) => String(t).trim().toLowerCase()).filter(Boolean))]
-    posts.push({ id, modified, tags })
+    posts.push({ id, frontmatter })
   }
   return posts
+}
+
+export async function readPostDates(contentDir) {
+  return (await readPosts(contentDir)).map(({ id, frontmatter }) => {
+    const modified = new Date(frontmatter.updatedDate ?? frontmatter.publishDate)
+    const tags = [...new Set((frontmatter.tags ?? []).map((t) => String(t).trim().toLowerCase()).filter(Boolean))]
+    return { id, modified, tags }
+  })
 }
 
 export function createLastmodResolver(posts, site) {

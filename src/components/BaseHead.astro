@@ -73,12 +73,12 @@ const socialImageURL = new URL(ogImage ?? config.socialCard, Astro.site).href
 }
 
 {/* Twitter */}
-<meta content='summary_large_image' property='twitter:card' />
-<meta content={canonicalURL} property='twitter:url' />
-<meta content={articleDate ? title : fullTitle} property='twitter:title' />
-<meta content={description} property='twitter:description' />
-<meta content={socialImageURL} property='twitter:image' />
-<meta content={ogImageAlt ?? GENERIC_OG_ALT} property='twitter:image:alt' />
+<meta content='summary_large_image' name='twitter:card' />
+<meta content={canonicalURL} name='twitter:url' />
+<meta content={articleDate ? title : fullTitle} name='twitter:title' />
+<meta content={description} name='twitter:description' />
+<meta content={socialImageURL} name='twitter:image' />
+<meta content={ogImageAlt ?? GENERIC_OG_ALT} name='twitter:image:alt' />
 
 {/* Sitemap */}
 <link href='/sitemap-index.xml' rel='sitemap' />

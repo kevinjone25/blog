@@ -2,9 +2,10 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import { readPage, htmlRoutes, jsonLdGraph, meta } from './helpers.mjs'
 import { PERSON, SEO_NAME, HOME_TITLE, HOME_DESC, TITLE_SUFFIX } from './expected.mjs'
+import { loadPosts } from './content-model.mjs'
 import { serializeJsonLd } from '../../src/utils/json-ld.mjs'
 
-const ID = { '@id': 'https://zzy.tw/#person' }, U = 'https://blog.zzy.tw/blog/markdown-syntax'
+const ID = { '@id': 'https://zzy.tw/#person' }
 const node = (h, type) => jsonLdGraph(h).find((n) => n['@type'] === type)
 test('home: WebSite + Blog + Person', async () => {
   const h = await readPage('/')
@@ -12,14 +13,18 @@ test('home: WebSite + Blog + Person', async () => {
   assert.deepEqual(node(h, 'WebSite'), { '@type': 'WebSite', '@id': 'https://blog.zzy.tw/#website', url: 'https://blog.zzy.tw/', name: SEO_NAME, inLanguage: 'zh-Hant-TW', publisher: ID })
   assert.deepEqual(node(h, 'Blog'), { '@type': 'Blog', '@id': 'https://blog.zzy.tw/#blog', url: 'https://blog.zzy.tw/', name: HOME_TITLE, description: HOME_DESC, inLanguage: 'zh-Hant-TW', author: ID, publisher: ID })
 })
-test('post: BlogPosting + BreadcrumbList + Person', async () => {
-  const h = await readPage('/blog/markdown-syntax')
-  assert.deepEqual(node(h, 'Person'), PERSON)
-  assert.deepEqual(node(h, 'BlogPosting'), { '@type': 'BlogPosting', '@id': `${U}#article`, url: U, headline: 'Markdown 語法指南', description: meta(h, 'description'), datePublished: '2026-10-24T02:00:00.000Z', dateModified: '2026-10-24T02:00:00.000Z', image: 'https://blog.zzy.tw/og/markdown-syntax.png', inLanguage: 'zh-Hant-TW', keywords: ['markdown', '寫作'], mainEntityOfPage: { '@type': 'WebPage', '@id': U }, author: ID, publisher: ID })
-  assert.deepEqual(node(h, 'BreadcrumbList'), { '@type': 'BreadcrumbList', itemListElement: [
-    { '@type': 'ListItem', position: 1, name: HOME_TITLE, item: 'https://blog.zzy.tw/' },
-    { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://blog.zzy.tw/blog' },
-    { '@type': 'ListItem', position: 3, name: 'Markdown 語法指南', item: U } ] })
+test('every post: BlogPosting + BreadcrumbList + Person derived from its frontmatter', async () => {
+  const posts = await loadPosts()
+  assert.ok(posts.length > 0, 'no posts found in src/content/blog')
+  for (const p of posts) {
+    const h = await readPage(p.route), U = `https://blog.zzy.tw${p.route}`
+    assert.deepEqual(node(h, 'Person'), PERSON, p.route)
+    assert.deepEqual(node(h, 'BlogPosting'), { '@type': 'BlogPosting', '@id': `${U}#article`, url: U, headline: p.title, description: meta(h, 'description'), datePublished: p.published, dateModified: p.modified, image: `https://blog.zzy.tw/og/${p.id}.png`, inLanguage: p.language.lang, ...(p.tags.length ? { keywords: p.tags } : {}), mainEntityOfPage: { '@type': 'WebPage', '@id': U }, author: ID, publisher: ID }, p.route)
+    assert.deepEqual(node(h, 'BreadcrumbList'), { '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: HOME_TITLE, item: 'https://blog.zzy.tw/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://blog.zzy.tw/blog' },
+      { '@type': 'ListItem', position: 3, name: p.title, item: U } ] }, p.route)
+  }
 })
 test('/about: ProfilePage + Person', async () => {
   const h = await readPage('/about')

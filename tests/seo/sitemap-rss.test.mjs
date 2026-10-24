@@ -5,15 +5,24 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { readPage, readDist, meta, htmlRoutes } from './helpers.mjs'
 import { readPostDates, createLastmodResolver } from '../../src/utils/sitemap-lastmod.mjs'
+import { loadPosts, newestModified } from './content-model.mjs'
 
 const S = 'https://blog.zzy.tw'
-test('sitemap lists pages with lastmod and excludes /search and 404', async () => {
+const urlFor = (route) => (route === '/' ? S : S + route.split('/').map(encodeURIComponent).join('/'))
+test('sitemap covers every indexable page with a lastmod and excludes /search and 404', async () => {
   const xml = await readDist('sitemap-0.xml')
   const urls = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, u]) => ({ loc: u.match(/<loc>(.*?)<\/loc>/)[1], lastmod: u.match(/<lastmod>(.*?)<\/lastmod>/)?.[1] }))
-  assert.deepEqual(urls.map((u) => u.loc).sort(), [S, `${S}/about`, `${S}/archives`, `${S}/blog`, `${S}/blog/markdown-syntax`, `${S}/tags`, `${S}/tags/%E5%AF%AB%E4%BD%9C`, `${S}/tags/markdown`].sort())
-  for (const u of urls) assert.equal(u.lastmod, '2026-10-24T02:00:00.000Z', u.loc)
-  const post = urls.find((u) => u.loc.endsWith('/blog/markdown-syntax'))
-  assert.equal(post.lastmod, meta(await readPage('/blog/markdown-syntax'), 'article:modified_time'))
+  const posts = await loadPosts(), locs = new Set(urls.map((u) => u.loc))
+  assert.equal(locs.size, urls.length, 'duplicate sitemap urls')
+  for (const u of urls) assert.ok(u.lastmod && !Number.isNaN(Date.parse(u.lastmod)), `${u.loc}: missing or invalid lastmod`)
+  for (const route of ['/', '/blog', '/archives', '/tags', '/about', ...posts.map((p) => p.route), ...posts.flatMap((p) => p.tags.map((t) => `/tags/${t}`))]) assert.ok(locs.has(urlFor(route)), `missing ${route}`)
+  for (const route of ['/search', '/404']) assert.ok(!locs.has(urlFor(route)), `${route} must not be listed`)
+  const expected = (await htmlRoutes()).filter((r) => !['/search', '/404'].includes(r)).map(urlFor).sort()
+  assert.deepEqual([...locs].sort(), expected, 'sitemap must list exactly the built pages minus /search and 404')
+  for (const p of posts) {
+    assert.equal(urls.find((u) => u.loc === urlFor(p.route)).lastmod, meta(await readPage(p.route), 'article:modified_time'), p.route)
+    assert.equal(urls.find((u) => u.loc === urlFor(p.route)).lastmod, p.modified, p.route)
+  }
 })
 test('/search and 404 are noindex, follow; other pages carry no robots meta', async () => {
   const routes = await htmlRoutes()
@@ -25,7 +34,8 @@ test('/search and 404 are noindex, follow; other pages carry no robots meta', as
 })
 test('RSS channel declares language and lastBuildDate', async () => {
   const rss = await readDist('rss.xml')
-  assert.match(rss, /<language>zh-TW<\/language>/); assert.match(rss, /<lastBuildDate>Sat, 24 Oct 2026 02:00:00 GMT<\/lastBuildDate>/)
+  assert.match(rss, /<language>zh-TW<\/language>/)
+  assert.ok(rss.includes(`<lastBuildDate>${newestModified(await loadPosts()).toUTCString()}</lastBuildDate>`), 'lastBuildDate must equal the newest updatedDate ?? publishDate')
 })
 test('lastmod resolver handles encoded tags, pagination and empty sites', () => {
   const posts = [{ id: 'a', modified: new Date('2026-01-01T00:00:00Z'), tags: ['寫作'] }, { id: 'b', modified: new Date('2026-02-01T00:00:00Z'), tags: ['c++'] }]

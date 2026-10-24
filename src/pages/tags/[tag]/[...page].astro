@@ -7,7 +7,7 @@ import { getBlogCollection, getUniqueTags, sortMDByDate } from 'astro-pure/serve
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import config, { tagDesc } from '@/site-config'
-import { paginatedName } from '@/utils/page-title.mjs'
+import { paginatedDescription, paginatedName } from '@/utils/page-title.mjs'
 
 export const prerender = true
 
@@ -33,7 +33,7 @@ const { page } = Astro.props
 const { tag } = Astro.params
 
 const meta = {
-  description: tagDesc(tag as string),
+  description: paginatedDescription(tagDesc(tag as string), page.currentPage),
   title: paginatedName(`Tag: ${tag}`, page.currentPage)
 }
 
