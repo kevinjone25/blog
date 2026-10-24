@@ -73,6 +73,9 @@ async function collectSite(site) {
   for (const u of urls) if (!u.startsWith(site.prod)) failures.push(`sitemap URL not on ${site.prod}: ${u}`)
   const paths = urls.map((u) => new URL(u).pathname)
   if (site.name === 'blog' && paths.includes('/search')) failures.push('blog sitemap includes /search')
+  const expectedPaths = site.name === 'blog' ? ['/', '/about', '/blog', '/archives', '/tags'] : ['/']
+  for (const e of expectedPaths) if (!paths.includes(e)) failures.push(`sitemap lacks expected page ${e}`)
+  if (site.name === 'blog' && !paths.some((p) => /^\/blog\/[^/]+$/.test(p))) failures.push('sitemap lists no /blog/<slug> post')
   record(`${site.origin} (robots+sitemap)`, failures)
   for (const p of paths) pages.push({ site, path: p, kind: 'page' })
   if (!paths.includes('/')) pages.push({ site, path: '/', kind: 'page' })
