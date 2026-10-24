@@ -7,7 +7,7 @@ import { Button, Icon } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import EmptyState from '@/components/EmptyState.astro'
 import config, { BLOG_DESC } from '@/site-config'
-import { paginatedName } from '@/utils/page-title.mjs'
+import { paginatedDescription, paginatedName } from '@/utils/page-title.mjs'
 
 export const getStaticPaths = (async ({ paginate }) => {
   const posts = sortMDByDate(await getBlogCollection())
@@ -29,7 +29,7 @@ const paginationProps = {
   ...(page?.url.next && { nextUrl: { text: 'Next posts', url: page.url.next } })
 }
 ---
-<PageLayout meta={{ title: paginatedName('Blog', page?.currentPage), description: BLOG_DESC }}>
+<PageLayout meta={{ title: paginatedName('Blog', page?.currentPage), description: paginatedDescription(BLOG_DESC, page?.currentPage) }}>
   <Button title='Back' href='/' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>

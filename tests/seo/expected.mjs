@@ -23,12 +23,11 @@ export const PERSON = {
 export const TITLE_SUFFIX = ` | ${SEO_NAME}`
 export const TITLES = {
   '/': HOME_TITLE, '/blog': `Blog${TITLE_SUFFIX}`, '/archives': `Archives${TITLE_SUFFIX}`, '/tags': `Tags${TITLE_SUFFIX}`,
-  '/tags/markdown': `Tag: markdown${TITLE_SUFFIX}`, '/tags/寫作': `Tag: 寫作${TITLE_SUFFIX}`, '/search': `Search${TITLE_SUFFIX}`,
-  '/about': `About${TITLE_SUFFIX}`, '/404': `Page not found${TITLE_SUFFIX}`, '/blog/markdown-syntax': `Markdown 語法指南${TITLE_SUFFIX}`
+  '/search': `Search${TITLE_SUFFIX}`, '/about': `About${TITLE_SUFFIX}`, '/404': `Page not found${TITLE_SUFFIX}`
 }
 export const DESCRIPTIONS = {
   '/': HOME_DESC, '/about': ABOUT_DESC, '/blog': BLOG_DESC, '/archives': ARCHIVES_DESC, '/tags': TAGS_DESC,
-  '/tags/寫作': tagDesc('寫作'), '/search': SEARCH_DESC, '/404': NOT_FOUND_DESC
+  '/search': SEARCH_DESC, '/404': NOT_FOUND_DESC
 }
 
 export const postOgAlt = (title) => `文章〈${title}〉的分享圖，作者 Kevin (ccy / zzy)`
