@@ -1,11 +1,14 @@
 // Modified for zzy: build-time rendering only; no server adapter.
+import { fileURLToPath } from 'node:url'
 import { rehypeHeadingIds } from '@astrojs/markdown-remark'
+import sitemap from '@astrojs/sitemap'
 import AstroPureIntegration from 'astro-pure'
 import { defineConfig, fontProviders, svgoOptimizer } from 'astro/config'
 import rehypeKatex from 'rehype-katex'
 import remarkMath from 'remark-math'
 
 // Local integrations
+import { createLastmodResolver, readPostDates } from './src/utils/sitemap-lastmod.mjs'
 import rehypeAutolinkHeadings from './src/plugins/rehype-auto-link-headings.ts'
 // Shiki
 import {
@@ -23,6 +26,11 @@ import {
 import config from './src/site.config.ts'
 
 // https://astro.build/config
+const lastmodFor = createLastmodResolver(
+  await readPostDates(fileURLToPath(new URL('./src/content/blog/', import.meta.url))),
+  'https://blog.zzy.tw'
+)
+
 export default defineConfig({
   // [Basic]
   site: 'https://blog.zzy.tw',
@@ -116,10 +124,16 @@ export default defineConfig({
 
   // [Integrations]
   integrations: [
-    // astro-pure will automatically add sitemap, mdx & unocss
-    // sitemap(),
-    // mdx(),
-    AstroPureIntegration(config)
+    // astro-pure adds mdx & unocss; it skips its default sitemap because we provide ours
+    AstroPureIntegration(config),
+    sitemap({
+      filter: (page) => !/^\/(search|404)(\/|$)/.test(new URL(page).pathname),
+      serialize(item) {
+        const lastmod = lastmodFor(item.url)
+        if (lastmod) item.lastmod = lastmod
+        return item
+      }
+    })
   ],
 
   // [Experimental]

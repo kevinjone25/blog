@@ -10,4 +10,5 @@ export interface PageMeta extends SiteMeta {
   ogImageAlt?: string
   modifiedDate?: string
   tags?: string[]
+  robots?: string
 }

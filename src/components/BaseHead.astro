@@ -8,7 +8,7 @@ import type { PageMeta } from '@/types'
 
 type Props = PageMeta
 
-const { articleDate, description, documentTitle, jsonLd, modifiedDate, ogImage, ogImageAlt, ogLocale, tags, title } = Astro.props
+const { articleDate, description, documentTitle, jsonLd, modifiedDate, ogImage, ogImageAlt, ogLocale, robots, tags, title } = Astro.props
 
 const fullTitle = documentTitle ?? `${title} ${config.titleDelimiter} ${SEO_NAME}`
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
@@ -43,6 +43,7 @@ const socialImageURL = new URL(ogImage ?? config.socialCard, Astro.site).href
 <meta content={fullTitle} name='title' />
 <meta content={description} name='description' />
 <meta content={SEO_NAME} name='author' />
+{robots && <meta name='robots' content={robots} />}
 
 {/* Theme Color */}
 <meta content='#FCFCFD' name='theme-color' />
