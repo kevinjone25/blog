@@ -16,3 +16,4 @@ STAGE2=
 GSC_TXT_RECORD_ID=
 NOTE=Snippet (from list GET) token equals site_token for both sites; site_tag is a distinct identifier
 PORTAL_TASK11=done
+STAGE1_R3=2026-10-24 after beacon interaction/3s delay (6bb369c, portal f4f14437): seo-audit --preview 14 PASS exit 0; lighthouse --strict desktop P=100 all 12; mobile P 99 / 98 about 98 archives 98 tags 97 tags/寫作 98 portal-404 | below 95: post 79, /blog 86, /tags/markdown 86, portal / 89, /search 91, blog 404 93; A=100 all; BP=100 except 404 errors-in-console (exempt); SEO=noindex on preview (exempt). Note /tags/markdown 86 vs /tags/寫作 97 with identical content → remote mobile noise ~±10. JSON: /private/tmp/claude-501/-Users-kevin/14c9c9f1-5547-40d7-b4b8-831450b3c601/scratchpad/lh-stage1-r3
