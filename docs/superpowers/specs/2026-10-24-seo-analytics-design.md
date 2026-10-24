@@ -17,6 +17,11 @@ Kevin 希望：
 
 - 兩個站都做（portal 這次納入範圍，不再「維持原狀」）。
 - 搜尋結果呈現的名字：**Kevin**；bio：**人生就像瑞士捲，有的人在瑞士，有的人在卷**（使用者原文「人生就像瑞士捲 有的人在瑞士 有的人在卷」；全形逗號為我補上，「卷」照原文保留）。
+- Kevin 的本名代號是 **ccy**；網域 zzy.tw 是當初打錯，但 zzy 也要能被搜到。給搜尋引擎看的名字寫 **Kevin (ccy / zzy)**；頁面上看得到的站名（「zzy / Blog」、portal 的 zzy）維持不改。
+- 摘要文案（bio 21 字不足 50 字，所以後面接一句說明）：
+  - portal：「人生就像瑞士捲，有的人在瑞士，有的人在卷。這裡是 Kevin（ccy / zzy）的個人入口，通往部落格與 GitHub。」
+  - 部落格首頁：「人生就像瑞士捲，有的人在瑞士，有的人在卷。Kevin（ccy / zzy）的部落格：筆記、想法，和值得留下的東西。」
+- /about 開頭加一句「I'm Kevin, also known as ccy and zzy.」與 bio，原有三段文字保留。
 - portal 上的 bio 取代 hero 底下那句「A few links. A universe of possibilities.」；主標題「Stay curious. Keep exploring.」保留英文。
 - 對外帳號只有 GitHub（`kevinjone25`），沒有 LinkedIn、X 等其他帳號。
 - 兩站都開 Cloudflare Web Analytics。
@@ -91,9 +96,9 @@ Lighthouse（P/A/BP/SEO）：
 
 ### 6.1 品牌實體（兩站共用）
 
-- 站名（給搜尋引擎看的）統一為 **Kevin (zzy)**。頁面上的視覺站名（部落格頁首的「zzy / Blog」）不改。
+- 站名（給搜尋引擎看的）統一為 **Kevin (ccy / zzy)**。頁面上的視覺站名（部落格頁首的「zzy / Blog」）不改。
 - Person 實體，以 portal 為正本：
-  - `@id: https://zzy.tw/#person`、`name: Kevin`、`alternateName: zzy`
+  - `@id: https://zzy.tw/#person`、`name: Kevin`、`alternateName: ["ccy", "zzy"]`
   - `description:` bio、`url: https://zzy.tw/`
   - `sameAs: ["https://github.com/kevinjone25", "https://blog.zzy.tw/"]`
 - 部落格所有 JSON-LD 的 `author`／`publisher` 都以 `@id` 指向同一個 Person。
@@ -104,32 +109,33 @@ Lighthouse（P/A/BP/SEO）：
 
 ### 6.2 portal（zzy.tw）
 
-- `<title>`、`og:title`：`Kevin (zzy)`。meta description、`og:description`：bio。
+- `<title>`、`og:title`：`Kevin (ccy / zzy)`。meta description、`og:description`：第 2 節的 portal 摘要文案。
 - 靜態 HTML 內要有真正的 `<a href>` 連到 https://blog.zzy.tw/ 與 GitHub。JS 可以在此之上做加強，但不能是唯一來源。
 - bio 以可見文字取代 hero 底下那句英文（`.hero-description`），版面不變。
 - 語言（我的判斷）：portal 主要內容是英文，`<html lang="en">` 維持；bio 那個元素加 `lang="zh-Hant-TW"`。
 - 補齊 canonical、Open Graph（含 1200×630 PNG og:image 與 og:image:alt）、Twitter card（summary_large_image）。
 - 圖檔（我的判斷）：
-  - portal 的 og:image 用部落格那套 og:image 產生器產生一次，內容放「Kevin (zzy)」與 bio，產出的 PNG 直接放進 `dist/`。
+  - portal 的 og:image 用部落格那套 og:image 產生器產生一次，內容放「Kevin (ccy / zzy)」與 bio，產出的 PNG 直接放進 `dist/`。
   - `favicon.ico`、`apple-touch-icon.png` 由現有的 `favicon.svg` 轉檔。
   - portal 不引入建置步驟。
-- JSON-LD：`WebSite`（name: Kevin (zzy)）＋`Person`（6.1）。
+- JSON-LD：`WebSite`（name: Kevin (ccy / zzy)）＋`Person`（6.1）。
 - 新增 `sitemap.xml`；`robots.txt` 加 Sitemap 行；新增 `404.html`（有內容，回 404）；補 `favicon.ico`、`apple-touch-icon.png`、`site.webmanifest`。
 - `www.zzy.tw` → 301 → `https://zzy.tw/`：用 Cloudflare Single Redirect 規則，保留路徑。
 
 ### 6.3 部落格（blog.zzy.tw）
 
 - **標題**：
-  - 首頁 `Kevin (zzy) 的部落格`
-  - 列表與一般頁 `<頁名> | Kevin (zzy)`
-  - 文章 `<文章標題> | Kevin (zzy)`
-- **描述**：首頁與 /about 用 bio；文章用 frontmatter `description`；其他頁各寫一句。讓 `CommonPage` 能接收 `description`，/about 不再落回站台預設。
+  - 首頁 `Kevin (ccy / zzy) 的部落格`
+  - 列表與一般頁 `<頁名> | Kevin (ccy / zzy)`
+  - 文章 `<文章標題> | Kevin (ccy / zzy)`
+- **描述**：首頁用第 2 節的部落格首頁摘要文案；/about 以 bio 開頭、後接一句介紹（實際文案由計畫定死，至少 50 字）；文章用 frontmatter `description`；其他頁各寫一句。讓 `CommonPage` 能接收 `description`，/about 不再落回站台預設。
+- **/about 內文**：開頭加「I'm Kevin, also known as ccy and zzy.」與 bio（使用者已同意），原有三段保留。
 - **語言**：站台預設 `lang="zh-Hant-TW"`、`og:locale=zh_TW`；文章依 frontmatter `language` 對應（`中文` → `zh-Hant-TW`，英文 → `en`；沒填就用站台預設）。介面上的英文標籤不翻譯。
 - **JSON-LD**：
   - 首頁：`WebSite`＋`Blog`（author → Person）
   - 文章：`BlogPosting`（headline、description、datePublished、dateModified、image、inLanguage、keywords＝tags、mainEntityOfPage、author）＋`BreadcrumbList`（`https://blog.zzy.tw/` › `https://blog.zzy.tw/blog` › 文章網址，一律無結尾斜線）
   - /about：`ProfilePage`（mainEntity → Person）
-- **og:image**：每篇文章在建置時自動產生 1200×630 PNG。圖上放文章標題與「Kevin (zzy)」，黑白配色呼應主題，需支援中文字。列表等頁沿用通用圖。補 og:image:alt、article:published_time、article:modified_time、article:tag。
+- **og:image**：每篇文章在建置時自動產生 1200×630 PNG。圖上放文章標題與「Kevin (ccy / zzy)」，黑白配色呼應主題，需支援中文字。列表等頁沿用通用圖。補 og:image:alt、article:published_time、article:modified_time、article:tag。
 - **sitemap**：
   - 每個 URL 帶 lastmod（文章用 updatedDate／publishDate）
   - 排除 /search 與 404，/search 加 `noindex, follow`
@@ -143,8 +149,9 @@ Lighthouse（P/A/BP/SEO）：
 - **內部連結**：canonical、sitemap 與站內連結一律用無結尾斜線的正式網址，避免觸發 307。
 - **補站名資產**：`favicon.ico`、`site.webmanifest`（apple-touch-icon 已有）。
 - **preview 不被索引**（我的判斷）：
-  - CI 部署 preview 時，建置帶入環境變數，讓產出的 `_headers` 對全站加 `X-Robots-Tag: noindex`；production 的建置不帶，所以不受影響。
-  - portal 沒有建置步驟，preview 只靠 canonical 指回 `https://zzy.tw/`。
+  - 部落格與 portal 的 `_headers` 各加一條以主機名比對的規則：`https://:worker.:sub.workers.dev/*` → `X-Robots-Tag: noindex`。Cloudflare 文件明確支援這種寫法。
+  - 只有 workers.dev 網址會套用，正式網域不受影響，也不必修改 CI 或建置。
+  - 這條規則對 404 回應是否生效，文件沒寫，驗收時實測。
 
 ### 6.4 既有文章微調（〈Markdown 語法指南〉）
 
@@ -185,12 +192,15 @@ Lighthouse（P/A/BP/SEO）：
 1. **preview 階段**：頁面層的項目（title、description、canonical、lang、OG、JSON-LD、beacon、Lighthouse、外觀對照）在 preview 驗。
 2. **正式站階段**：Kevin 部署部落格正式站、我部署 portal 正式站之後，再驗網域層的項目（www 轉址、正式網域的 robots／sitemap、`_headers`、RUM dashboard、對正式網址的 Lighthouse）。
 
-**分數例外**：若某頁經合理努力仍達不到 mobile Performance ≥95，不擋整個專案。報告寫明該頁分數、扣分原因與已嘗試的修法，交由 Kevin 決定。
+**分數例外**：
+- 若某頁經合理努力仍達不到 mobile Performance ≥95，不擋整個專案。報告寫明該頁分數、扣分原因與已嘗試的修法，交由 Kevin 決定。
+- 標了 noindex 的頁（/search、404）拿不到 Lighthouse SEO 100，屬預期例外。
+- preview 全站帶 noindex，所以 SEO 100 只在正式站階段驗。
 
 逐條核對項目：
 
 - 第 3 節目標 4 的分數門檻，每頁 mobile 與 desktop 都達標（例外依上述規則回報）。
-- 爬蟲逐頁：title 唯一且含「Kevin (zzy)」、description 50–160 字、canonical 指向自己、`lang` 正確、og:image 是 1200×630 PNG、JSON-LD 為合法 JSON，且型別與欄位符合 6.2／6.3。
+- 爬蟲逐頁：title 唯一且含「Kevin (ccy / zzy)」、description 50–160 字、canonical 指向自己、`lang` 正確、og:image 是 1200×630 PNG、JSON-LD 為合法 JSON，且型別與欄位符合 6.2／6.3。
 - 用 schema.org 驗證器或等效工具驗 JSON-LD 無錯誤。
 - portal 在**不執行 JS** 時，HTML 內含 `<a href="https://blog.zzy.tw/">`。
 - `curl -I https://www.zzy.tw/abc` → 301 → `https://zzy.tw/abc`。
